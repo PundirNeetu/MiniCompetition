@@ -1,0 +1,2 @@
+# MiniCompetition
+First competition

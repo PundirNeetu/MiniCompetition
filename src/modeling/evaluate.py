@@ -9,6 +9,6 @@ def evaluate(train_X, train_y, val_X, val_y):
 
     rf_predict = rf.predict(val_X)
 
-    f1_score(val_y, rf_predict, average="micro")
+    score = f1_score(val_y, rf_predict, average="micro")
 
-    return f1_score
+    return score

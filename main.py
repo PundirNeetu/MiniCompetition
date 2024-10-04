@@ -5,7 +5,9 @@ from src.config import DATA_FOLDER
 from src.modeling.evaluate import evaluate, create_rf_pipeline
 from src.modeling.split import split
 from src.modeling.predict import create_prediction, create_output
-from src.modeling.model import create_xgb_pipeline
+#from src.modeling.model import create_xgb_pipeline
+from src.modeling.evaluate import create_xgb_pipeline
+from sklearn.preprocessing import LabelEncoder
 
 def main()-> pd.DataFrame:
     # Load all datasets from the data folder
@@ -24,7 +26,21 @@ def main()-> pd.DataFrame:
     df = pd.merge(df_all_preprocessing['train_values'], df_all_preprocessing['train_labels'], on='building_id', how='inner')
     print("Merged DataFrame shape:", df.shape)
     X = df.drop(columns=['damage_grade'])  
-    y = df['damage_grade']  
+    y = df['damage_grade']
+
+    # instead of a function for label encoding we can just subtract 1 to 
+    # transform from [1,2,3] to [0,1,2] as needed for xgboost, and in the 
+    # create prediction function we add 1 again
+
+    print("y_before_enc", y)
+
+    y = df['damage_grade'] - 1
+
+
+    #le = LabelEncoder()
+    #y = le.fit_transform(y)
+  
+    print("y_after_enc", y)
 
     # Use the split function to get training and validation sets
     train_X, val_X, train_y, val_y = split(X, y)
@@ -43,10 +59,10 @@ def main()-> pd.DataFrame:
     f1_xgb = evaluate(train_X, train_y, val_X, val_y, xgb_pipeline)
 
     # Print the F1 score
-    print("F1 Score:", f1_rf)
+    print("RF F1 Score:", f1_rf)
 
     # Print the F1 score
-    print("F1 Score:", f1_xgb)
+    print("XGB F1 Score:", f1_xgb)
 
     rf_prediction = create_prediction(test_data=all_dataframes['test_values'], pipeline=rf_pipeline)
     create_output(test_data=all_dataframes['test_values'], prediction=rf_prediction, output_file_number='01')

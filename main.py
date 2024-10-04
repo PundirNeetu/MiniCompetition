@@ -2,7 +2,7 @@ import pandas as pd
 from src.dataset import load_datasets, preprocess_data
 from src.features import create_features
 from src.config import DATA_FOLDER
-from src.modeling.evaluate import evaluate, create_rf_pipeline, perform_crossvalidation
+from src.modeling.evaluate import evaluate, create_rf_pipeline, perform_crossvalidation_RF
 from src.modeling.split import split
 from src.modeling.predict import create_prediction, create_output
 from src.modeling.model import create_random_forest_model
@@ -50,7 +50,7 @@ def main()-> pd.DataFrame:
 
     #rf_prediction = create_prediction(test_data=all_dataframes['test_values'], pipeline=rf_pipeline)
     #create_output(test_data=all_dataframes['test_values'], prediction=rf_prediction, output_file_number='01')
-    perform_crossvalidation(rf_pipeline, X, y, 5)
+    perform_crossvalidation_RF(output_file_number='01', pipeline=rf_pipeline, X=X, y=y, cv=5)
 
 
   #  xgb_prediction = create_prediction(test_data=all_dataframes['test_values'], pipeline=xgb_pipeline)

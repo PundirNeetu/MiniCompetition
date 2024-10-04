@@ -31,35 +31,19 @@ def evaluate(X_train, y_train, X_val, y_val, pipeline):
     return score
 
 
-def perform_crossvalidation(pipeline, X, y, cv=5):
+def perform_crossvalidation_RF(output_file_number, model_used, pipeline, X, y, cv=5):
     param_grid = {
-        'randomforestclassifier__n_estimators': [200, 300],
-        'randomforestclassifier__max_depth': [5, 10]
+        'randomforestclassifier__n_estimators': [50, 100],
+        'randomforestclassifier__max_depth': [5, 7]
     }
 
-    # Set up GridSearchCV with cross-validation
     grid_search = GridSearchCV(pipeline, param_grid, cv=cv, return_train_score=True)
 
-    # Fit GridSearchCV to the data
     grid_search.fit(X, y)
 
-    # Print best parameters and best cross-validation score
     print("Best parameters:", grid_search.best_params_)
     print("Best cross-validation score:", grid_search.best_score_)
 
-    # Convert cv_results_ to a DataFrame for easy viewing
     results_df = pd.DataFrame(grid_search.cv_results_)
 
-    # Überprüfe, welche Spalten in cv_results_ verfügbar sind
-    print("\nAvailable columns in cv_results_:")
-    print(results_df.columns)
-
-    # Print a summary of the results, including parameters and mean validation scores
-    columns_to_print = ['params', 'mean_test_score', 'std_test_score', 'rank_test_score']
-
-    # Füge 'mean_train_score' und 'std_train_score' nur hinzu, wenn sie vorhanden sind
-    if 'mean_train_score' in results_df.columns and 'std_train_score' in results_df.columns:
-        columns_to_print.extend(['mean_train_score', 'std_train_score'])
-
-    print("\nDetailed cross-validation results:")
-    print(results_df[columns_to_print])
+    results_df.to_csv(f'src/modeling/crossvalidation_output_RF_{output_file_number}.csv')

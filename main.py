@@ -5,6 +5,7 @@ from src.config import DATA_FOLDER
 from src.modeling.evaluate import evaluate, create_rf_pipeline
 from src.modeling.split import split
 from src.modeling.predict import create_prediction, create_output
+from src.modeling.model import create_xgb_pipeline
 
 def main()-> pd.DataFrame:
     # Load all datasets from the data folder
@@ -31,16 +32,27 @@ def main()-> pd.DataFrame:
     categorical_columns = all_dataframes['train_values'].select_dtypes(include='object').columns
     numerical_columns_to_clean = ['age']
 
-    pipeline = create_rf_pipeline(categorical_columns, numerical_columns_to_clean)
+    rf_pipeline = create_rf_pipeline(categorical_columns, numerical_columns_to_clean)
+
+    xgb_pipeline = create_xgb_pipeline(categorical_columns, numerical_columns_to_clean)
 
     # Call the evaluate function to get the F1 score
-    f1 = evaluate(train_X, train_y, val_X, val_y, pipeline)
+    f1_rf = evaluate(train_X, train_y, val_X, val_y, rf_pipeline)
+
+    # Call the evaluate function to get the F1 score
+    f1_xgb = evaluate(train_X, train_y, val_X, val_y, xgb_pipeline)
 
     # Print the F1 score
-    print("F1 Score:", f1)
+    print("F1 Score:", f1_rf)
 
-    prediction = create_prediction(test_data=all_dataframes['test_values'], pipeline=pipeline)
-    create_output(test_data=all_dataframes['test_values'], prediction=prediction, output_file_number='01')
+    # Print the F1 score
+    print("F1 Score:", f1_xgb)
+
+    rf_prediction = create_prediction(test_data=all_dataframes['test_values'], pipeline=rf_pipeline)
+    create_output(test_data=all_dataframes['test_values'], prediction=rf_prediction, output_file_number='01')
+
+    xgb_prediction = create_prediction(test_data=all_dataframes['test_values'], pipeline=xgb_pipeline)
+    create_output(test_data=all_dataframes['test_values'], prediction=xgb_prediction, output_file_number='02')
 
 if __name__ == "__main__":
     main()

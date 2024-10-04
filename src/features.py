@@ -1,6 +1,6 @@
 import pandas as pd
 
-def create_features(dataframe):
+def create_features(dataframe)->pd.DataFrame:
     """
     Create new features for the earthquake dataset.
     

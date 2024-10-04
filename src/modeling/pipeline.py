@@ -34,7 +34,7 @@ def create_preprocessor(numerical_transformer, categorical_transformer, numerica
         ('categorical', categorical_transformer, categorical_columns)
     ])
 
-
+# class_weight='balanced' F1 Score: 0.38637017708793003
 def create_random_forest_model():
     return RandomForestClassifier(criterion='entropy', n_estimators=200, max_depth=4, n_jobs=-1)
 

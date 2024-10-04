@@ -28,7 +28,7 @@ def preprocess_data(dataframe)-> pd.DataFrame:
     #Drop rows with any missing values
     df_cleaned = dataframe.dropna()
     print("Dropped rows with missing values.")
-    df_cleaned = remove_categorical_features(df_cleaned)
+#    df_cleaned = remove_categorical_features(df_cleaned)
     return df_cleaned
 
 def remove_categorical_features(dataframe)-> pd.DataFrame:

@@ -7,6 +7,8 @@ from src.modeling.evaluate import perform_crossvalidation
 from src.modeling.split import split
 from src.modeling.predict import create_prediction, create_output
 from sklearn.preprocessing import LabelEncoder
+from src.plots import plot_numerical_distributions, plot_categorical_distributions, plot_heatmap_with_target, plot_target_distribution
+
 
 
 
@@ -33,6 +35,14 @@ def main()-> pd.DataFrame:
 
     geo_columns = ['geo_level_1_id', 'geo_level_2_id', 'geo_level_3_id' ]
     X[geo_columns] = X[geo_columns].astype(str)
+
+    # Plotting
+    print(plot_numerical_distributions(X))
+    plot_categorical_distributions(X)
+    plot_heatmap_with_target(X, df_all_preprocessing['train_labels'])
+    plot_target_distribution(y)
+
+
     # Use the split function to get training and validation sets
     train_X, val_X, train_y, val_y = split(X, y)
 

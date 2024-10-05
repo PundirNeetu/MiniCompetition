@@ -3,6 +3,15 @@ import os
 
         
 def load_datasets(folder_path)-> pd.DataFrame:
+    """
+    Load datasets.
+
+    Parameters:
+    folder_path
+
+    Returns:
+    all_dataframes.
+    """
     all_dataframes = {}
     for filename in os.listdir(folder_path):
         if filename.endswith('.csv'):
@@ -25,6 +34,15 @@ def load_datasets(folder_path)-> pd.DataFrame:
 
 
 def preprocess_data(dataframe)-> pd.DataFrame:
+    """
+    Preprocess data.
+
+    Parameters:
+    dataframe
+
+    Returns:
+    df_cleaned.
+    """
     #Drop rows with any missing values
     df_cleaned = dataframe.dropna()
     print("Dropped rows with missing values.")
@@ -32,4 +50,13 @@ def preprocess_data(dataframe)-> pd.DataFrame:
     return df_cleaned
 
 def remove_categorical_features(dataframe)-> pd.DataFrame:
+    """
+    Remove categorical fetures.
+
+    Parameters:
+    dataframe
+
+    Returns:
+    dataframe.select_dtypes(exclude=['object']).
+    """
     return dataframe.select_dtypes(exclude=['object'])

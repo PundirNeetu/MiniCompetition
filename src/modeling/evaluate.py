@@ -11,6 +11,18 @@ from category_encoders import TargetEncoder, CatBoostEncoder, HashingEncoder
 
 
 def create_pipeline(categorical_columns, numerical_columns_to_clean, geo_columns, model_name) -> Pipeline:
+    """
+    Creates a pipeline.
+
+    Parameters:
+    categorical_columns
+    numerical_columns_to_clean
+    geo_columns
+    model_name
+
+    Returns:
+    pipeline(preprocessor, model_name, model)
+    """
 
     numerical_transformer = create_numerical_transformer()
     categorical_transformer = create_categorical_transformer()
@@ -30,6 +42,16 @@ def create_pipeline(categorical_columns, numerical_columns_to_clean, geo_columns
 
 
 def create_xgb_pipeline(categorical_columns, numerical_columns_to_clean) -> Pipeline:
+    """
+    Creates xgb pipeline.
+
+    Parameters:
+    categorical_columns
+    numerical_columns_to_clean
+
+    Returns:
+    create_pipeline(preprocessor, model_name='xgbclassifier', model=xgb_model)
+    """
     numerical_transformer = create_numerical_transformer()
     categorical_transformer = create_categorical_transformer()
     preprocessor = create_preprocessor(numerical_transformer, categorical_transformer, numerical_columns_to_clean, categorical_columns)
@@ -38,6 +60,19 @@ def create_xgb_pipeline(categorical_columns, numerical_columns_to_clean) -> Pipe
 
 
 def evaluate(X_train, y_train, X_val, y_val, pipeline):
+    """
+    Evaluate the model performance.
+
+    Parameters:
+    X_train
+    y_train
+    X_val
+    y_val
+    pipeline
+
+    Returns:
+    score
+    """
     #random forest with gini
     pipeline.fit(X_train, y_train)
     rf_predict = pipeline.predict(X_val)
@@ -45,6 +80,20 @@ def evaluate(X_train, y_train, X_val, y_val, pipeline):
     return score
 
 def perform_crossvalidation(model, output_file_number, pipeline, X, y, cv=5):
+    """
+    Perform crossvalidation.
+
+    Parameters:
+    model
+    output_file_number
+    pipeline
+    X
+    y
+    cv
+
+    Returns:
+    """
+
     if model == 'rf':
         param_grid = {
             'randomforestclassifier__n_estimators': [100],

@@ -6,7 +6,7 @@ from src.modeling.pipeline import pipeline, create_preprocessor
 from src.modeling.pipeline import create_categorical_transformer, create_numerical_transformer, create_geo_data_transformer
 from sklearn.model_selection import GridSearchCV
 from category_encoders import TargetEncoder, CatBoostEncoder, HashingEncoder
-
+from sklearn.base import BaseEstimator, TransformerMixin
 
 
 def create_pipeline(categorical_columns, numerical_columns_to_clean, geo_columns) -> Pipeline:
@@ -50,9 +50,6 @@ def perform_crossvalidation(cv_output_file_number, pipeline, X, y, cv=5):
     best_model = grid_search.best_estimator_
     return best_model
 
-
-from sklearn.base import BaseEstimator, TransformerMixin
-import pandas as pd
 
 class FrequencyEncoder(BaseEstimator, TransformerMixin):
     def __init__(self):

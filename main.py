@@ -2,12 +2,14 @@ import pandas as pd
 from src.dataset import load_datasets, preprocess_data
 from src.features import create_features
 from src.config import DATA_FOLDER
-from src.modeling.evaluate import evaluate, create_rf_pipeline
+from src.modeling.evaluate import evaluate, create_pipeline
+from src.modeling.evaluate import perform_crossvalidation
 from src.modeling.split import split
 from src.modeling.predict import create_prediction, create_output
-#from src.modeling.model import create_xgb_pipeline
-from src.modeling.evaluate import create_xgb_pipeline
+from src.modeling.model import create_random_forest_model, create_xtreme_gradient_boosting_model
 from sklearn.preprocessing import LabelEncoder
+
+
 
 def main()-> pd.DataFrame:
     # Load all datasets from the data folder
@@ -25,50 +27,35 @@ def main()-> pd.DataFrame:
     # Assuming you want to evaluate a specific DataFrame, e.g., 'train_data'
     df = pd.merge(df_all_preprocessing['train_values'], df_all_preprocessing['train_labels'], on='building_id', how='inner')
     print("Merged DataFrame shape:", df.shape)
-    X = df.drop(columns=['damage_grade'])  
+    X = df.drop(columns=['damage_grade', 'building_id'])
     y = df['damage_grade']
+    label_encoder = LabelEncoder()
+    y = label_encoder.fit_transform(y)
 
-    # instead of a function for label encoding we can just subtract 1 to 
-    # transform from [1,2,3] to [0,1,2] as needed for xgboost, and in the 
-    # create prediction function we add 1 again
-
-    print("y_before_enc", y)
-
-    y = df['damage_grade'] - 1
-
-
-    #le = LabelEncoder()
-    #y = le.fit_transform(y)
-  
-    print("y_after_enc", y)
-
+    geo_columns = ['geo_level_1_id', 'geo_level_2_id', 'geo_level_3_id' ]
+    X[geo_columns] = X[geo_columns].astype(str)
     # Use the split function to get training and validation sets
     train_X, val_X, train_y, val_y = split(X, y)
 
     categorical_columns = all_dataframes['train_values'].select_dtypes(include='object').columns
     numerical_columns_to_clean = ['age']
 
-    rf_pipeline = create_rf_pipeline(categorical_columns, numerical_columns_to_clean)
-
-    xgb_pipeline = create_xgb_pipeline(categorical_columns, numerical_columns_to_clean)
-
-    # Call the evaluate function to get the F1 score
-    f1_rf = evaluate(train_X, train_y, val_X, val_y, rf_pipeline)
+    # possible model names: 'rf' and 'xgb'
+    model_name = 'xgb'
+    pipeline = create_pipeline(categorical_columns, numerical_columns_to_clean, geo_columns, model_name)
 
     # Call the evaluate function to get the F1 score
-    f1_xgb = evaluate(train_X, train_y, val_X, val_y, xgb_pipeline)
+    f1 = evaluate(train_X, train_y, val_X, val_y, pipeline)
 
     # Print the F1 score
-    print("RF F1 Score:", f1_rf)
+    print("F1 Score:", f1)
 
-    # Print the F1 score
-    print("XGB F1 Score:", f1_xgb)
 
-    rf_prediction = create_prediction(test_data=all_dataframes['test_values'], pipeline=rf_pipeline)
-    create_output(test_data=all_dataframes['test_values'], prediction=rf_prediction, output_file_number='01')
+    prediction = create_prediction(test_data=all_dataframes['test_values'], pipeline=pipeline)
+    decoded_prediction = label_encoder.inverse_transform(prediction)
+    create_output(test_data=all_dataframes['test_values'], prediction=decoded_prediction, output_file_number='XGB_04')
 
-    xgb_prediction = create_prediction(test_data=all_dataframes['test_values'], pipeline=xgb_pipeline)
-    create_output(test_data=all_dataframes['test_values'], prediction=xgb_prediction, output_file_number='02')
+    #perform_crossvalidation(model='rf',output_file_number=2, pipeline=rf_pipeline, X=X, y=y, cv=5)
 
 if __name__ == "__main__":
     main()

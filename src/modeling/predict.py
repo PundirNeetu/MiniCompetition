@@ -1,15 +1,9 @@
 import pandas as pd
 import numpy as np
-import sys
+#import sys
 from sklearn.pipeline import Pipeline
 
-
-sys.path.append('..')
-# TEST_DATA_PATH = '../data/test_values.csv'
-
-
-# def read_test_data(test_data_path: str) -> pd.DataFrame:
-#    return pd.read_csv(test_data_path)
+#sys.path.append('..')
 
 
 def create_prediction(test_data: pd.DataFrame, pipeline:Pipeline) -> np.array:

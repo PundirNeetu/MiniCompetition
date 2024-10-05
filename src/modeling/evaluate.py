@@ -6,7 +6,7 @@ from src.modeling.pipeline import create_categorical_transformer, create_numeric
 from src.modeling.model import create_random_forest_model, create_xtreme_gradient_boosting_model
 from sklearn.model_selection import GridSearchCV
 from src.modeling.model import create_xtreme_gradient_boosting_model
-from category_encoders import TargetEncoder, CatBoostEncoder, HashingEncoder
+from category_encoders import TargetEncoder
 
 
 

@@ -10,6 +10,7 @@ from src.modeling.model import create_random_forest_model, create_xtreme_gradien
 from sklearn.preprocessing import LabelEncoder
 
 
+
 def main()-> pd.DataFrame:
     # Load all datasets from the data folder
     all_dataframes = load_datasets(DATA_FOLDER)
@@ -48,6 +49,7 @@ def main()-> pd.DataFrame:
 
     # Print the F1 score
     print("F1 Score:", f1)
+
 
     prediction = create_prediction(test_data=all_dataframes['test_values'], pipeline=pipeline)
     decoded_prediction = label_encoder.inverse_transform(prediction)

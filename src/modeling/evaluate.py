@@ -1,13 +1,13 @@
 import pandas as pd
 from sklearn.metrics import f1_score
 from sklearn.pipeline import Pipeline
-
 from src.modeling.pipeline import pipeline, create_preprocessor
 from src.modeling.pipeline import create_categorical_transformer, create_numerical_transformer, create_geo_data_transformer
 from src.modeling.model import create_random_forest_model, create_xtreme_gradient_boosting_model
 from sklearn.model_selection import GridSearchCV
 from src.modeling.model import create_xtreme_gradient_boosting_model
 from category_encoders import TargetEncoder, CatBoostEncoder, HashingEncoder
+
 
 
 def create_pipeline(categorical_columns, numerical_columns_to_clean, geo_columns, model_name) -> Pipeline:
@@ -29,12 +29,19 @@ def create_pipeline(categorical_columns, numerical_columns_to_clean, geo_columns
     return pipeline(preprocessor, model_name, model)
 
 
+def create_xgb_pipeline(categorical_columns, numerical_columns_to_clean) -> Pipeline:
+    numerical_transformer = create_numerical_transformer()
+    categorical_transformer = create_categorical_transformer()
+    preprocessor = create_preprocessor(numerical_transformer, categorical_transformer, numerical_columns_to_clean, categorical_columns)
+    xgb_model = create_xtreme_gradient_boosting_model()
+    return create_pipeline(preprocessor, model_name='xgbclassifier', model=xgb_model)
+
+
 def evaluate(X_train, y_train, X_val, y_val, pipeline):
     #random forest with gini
     pipeline.fit(X_train, y_train)
     rf_predict = pipeline.predict(X_val)
     score = f1_score(y_val, rf_predict, average="micro")
-
     return score
 
 def perform_crossvalidation(model, output_file_number, pipeline, X, y, cv=5):

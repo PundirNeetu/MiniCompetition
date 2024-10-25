@@ -2,6 +2,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
+from category_encoders import TargetEncoder, CatBoostEncoder, HashingEncoder
 
 
 def create_numerical_transformer():

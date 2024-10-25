@@ -12,6 +12,17 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 
 def create_pipeline(categorical_columns, numerical_columns_to_clean, geo_columns) -> Pipeline:
+    """
+    Creates a pipeline.
+
+    Parameters:
+    categorical_columns
+    numerical_columns_to_clean
+    geo_columns
+
+    Returns:
+    pipeline(preprocessor, model_name, model)
+    """
 
     numerical_transformer = create_numerical_transformer()
     categorical_transformer = create_categorical_transformer()
@@ -28,6 +39,19 @@ def create_pipeline(categorical_columns, numerical_columns_to_clean, geo_columns
 
 
 def evaluate(X_train, y_train, X_val, y_val, pipeline):
+    """
+    Evaluate the model performance.
+
+    Parameters:
+    X_train
+    y_train
+    X_val
+    y_val
+    pipeline
+
+    Returns:
+    score
+    """
     #random forest with gini
     pipeline.fit(X_train, y_train)
     rf_predict = pipeline.predict(X_val)
@@ -35,11 +59,25 @@ def evaluate(X_train, y_train, X_val, y_val, pipeline):
     return score
 
 def perform_crossvalidation(cv_output_file_number, pipeline, X, y, cv=5):
+    """
+    Perform crossvalidation.
+
+    Parameters:
+    cv_output_file_number
+    pipeline
+    X
+    y
+    cv
+
+    Returns:
+    best_model
+    """
     param_grid = {
         'xgbclassifier__n_estimators': [400],
         'xgbclassifier__learning_rate': [0.1],
         'xgbclassifier__max_depth': [5]
     }
+
     grid_search = GridSearchCV(pipeline, param_grid, cv=cv, return_train_score=True)
     grid_search.fit(X, y)
 
